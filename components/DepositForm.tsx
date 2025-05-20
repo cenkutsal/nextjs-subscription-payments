@@ -16,6 +16,7 @@ export function DepositForm() {
       return;
     }
     toast.success('Deposit created successfully');
+    setErrors([]);
     formRef.current?.reset();
   };
 
