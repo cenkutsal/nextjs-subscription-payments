@@ -2,8 +2,10 @@ import { createClient } from '@supabase/supabase-js';
 
 export interface Deposit {
   bankName: string;
+  alias: string;
   amount: number;
-  dueDate: string;
+  depositDate: string;
+  termDays: number;
 }
 
 export const supabase = createClient(
