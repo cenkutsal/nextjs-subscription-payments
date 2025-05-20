@@ -145,10 +145,6 @@ drop publication if exists supabase_realtime;
 create publication supabase_realtime for table products, prices;
 
 
-/**
-* DEPOSITS
-* Note: this is a private table that contains a mapping of user IDs to Stripe customer IDs.
-*/
 CREATE OR REPLACE FUNCTION validate_deposit()
 RETURNS TRIGGER AS $$
 BEGIN

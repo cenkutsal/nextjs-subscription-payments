@@ -143,3 +143,47 @@ create policy "Can only view own subs data." on subscriptions for select using (
  */
 drop publication if exists supabase_realtime;
 create publication supabase_realtime for table products, prices;
+
+CREATE OR REPLACE FUNCTION public.create_deposit(
+  p_bank_name TEXT,
+  p_alias TEXT,            -- Add this parameter
+  p_amount FLOAT8,
+  p_deposit_date DATE,
+  p_term_days INTEGER,
+  p_idempotency_key TEXT DEFAULT NULL
+) RETURNS JSONB AS $$
+DECLARE
+  v_due_date DATE;
+BEGIN
+  -- Validate term days
+  IF p_term_days < 1 THEN
+    RETURN jsonb_build_object('error', 'Term must be ≥1 day');
+  END IF;
+  
+  -- Calculate due date
+  v_due_date := p_deposit_date + (p_term_days * INTERVAL '1 day');
+  
+  -- Insert with idempotency check
+  INSERT INTO deposits(
+    bank_name,
+    alias,                -- Add this column
+    amount,
+    deposit_date,
+    term_days,
+    due_date,
+    idempotency_key
+  ) VALUES (
+    p_bank_name,
+    p_alias,              -- Insert alias
+    p_amount,
+    p_deposit_date,
+    p_term_days,
+    v_due_date,
+    p_idempotency_key
+  ) ON CONFLICT (idempotency_key) DO NOTHING;
+  
+  RETURN jsonb_build_object('success', true);
+EXCEPTION WHEN OTHERS THEN
+  RETURN jsonb_build_object('error', SQLERRM);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
