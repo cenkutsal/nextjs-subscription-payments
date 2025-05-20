@@ -6,8 +6,8 @@ import { Inter } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
 const inter = Inter({ subsets: ['latin'] });
 
-const title = 'Next.js Subscription Starter';
-const description = 'Brought to you by Vercel, Stripe, and Supabase.';
+const title = 'Deposit Tracker';
+const description = 'Track your deposits and get notified when they are due.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(getURL()),
