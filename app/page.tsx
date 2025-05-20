@@ -3,6 +3,7 @@
 import React from 'react';
 import { Deposit, supabase } from '@/lib/supabase';
 import { useState } from 'react';
+import { toast } from 'react-hot-toast';
 
 export default function Page() {
   const [errors, setErrors] = useState<string[]>([]);
@@ -30,10 +31,8 @@ export default function Page() {
     }
 
     const { error } = await supabase.from('deposits').insert(deposit);
-    if (error) alert('Failed: ' + error.message);
-    else {
-      alert('Deposit added successfully');
-    }
+    if (error) toast.error('Failed: ' + error.message);
+    else toast.success('Deposit added successfully');
   };
   return (
     <div className="flex flex-col items-center justify-center h-screen">
