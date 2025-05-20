@@ -143,3 +143,28 @@ create policy "Can only view own subs data." on subscriptions for select using (
  */
 drop publication if exists supabase_realtime;
 create publication supabase_realtime for table products, prices;
+
+
+/**
+* DEPOSITS
+* Note: this is a private table that contains a mapping of user IDs to Stripe customer IDs.
+*/
+CREATE OR REPLACE FUNCTION validate_deposit()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.deposit_date > CURRENT_DATE THEN
+    RAISE EXCEPTION 'Future deposit dates forbidden';
+  END IF;
+  IF NEW.term_days < 1 THEN
+    RAISE EXCEPTION 'Term days must be a positive number';
+  END IF;
+  IF NEW.amount < 1 THEN
+    RAISE EXCEPTION 'Amount must be a positive number';
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_dates
+BEFORE INSERT ON deposits
+FOR EACH ROW EXECUTE FUNCTION validate_deposit();

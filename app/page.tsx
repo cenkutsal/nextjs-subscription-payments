@@ -97,7 +97,6 @@ export default function Page() {
           name="termDays"
           type="number"
           placeholder="Term Days"
-          min="1"
         />
         <button className="bg-blue-500 text-white p-2 rounded-md" type="submit">
           Submit
