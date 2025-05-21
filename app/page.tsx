@@ -1,14 +1,13 @@
-'use client';
-
-import React, { useRef } from 'react';
-import { Deposit, supabase } from '@/lib/supabase';
-import { useState } from 'react';
-import { toast } from 'react-hot-toast';
 import { DepositForm } from '@/components/DepositForm';
+import { createClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
 
-export default function Page() {
-  const formRef = useRef<HTMLFormElement>(null);
-
+export default async function Page() {
+  const supabase = createClient();
+  const { data: user } = await supabase.auth.getUser();
+  if (!user) {
+    redirect('/login');
+  }
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <DepositForm />

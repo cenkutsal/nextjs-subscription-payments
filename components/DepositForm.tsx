@@ -2,8 +2,6 @@
 import { createDeposit } from '@/app/actions/deposit';
 import { useState, useRef } from 'react';
 import { toast } from 'react-hot-toast';
-import { useUser } from '@supabase/auth-helpers-react';
-import Link from 'next/link';
 
 export function DepositForm() {
   const [errors, setErrors] = useState<string[]>([]);
@@ -21,15 +19,6 @@ export function DepositForm() {
     setErrors([]);
     formRef.current?.reset();
   };
-
-  const user = useUser();
-
-  if (!user)
-    return (
-      <div className="text-center text-red-400 text-2xl font-bold">
-        <Link href="/login">Please login first</Link>
-      </div>
-    );
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-4">

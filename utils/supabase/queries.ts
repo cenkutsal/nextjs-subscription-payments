@@ -37,3 +37,8 @@ export const getUserDetails = cache(async (supabase: SupabaseClient) => {
     .single();
   return userDetails;
 });
+
+export const getDeposits = cache(async (supabase: SupabaseClient) => {
+  const { data: deposits } = await supabase.from('deposits').select('*');
+  return deposits;
+});

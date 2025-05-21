@@ -4,8 +4,9 @@ import { getURL } from '@/utils/helpers';
 import 'styles/main.css';
 import { Inter } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
-import { createClient } from '@/utils/supabase/client';
 import Link from 'next/link';
+import { createClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
 const inter = Inter({ subsets: ['latin'] });
 
 const title = 'Deposit Tracker';
@@ -19,9 +20,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   const supabase = createClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
+  const { data: user } = await supabase.auth.getUser();
   return (
     <html lang="en">
       <body className={`${inter.className} bg-black`}>
@@ -29,24 +28,35 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <Link className="text-2xl font-bold" href="/">
             Deposit Tracker
           </Link>
-          {user ? (
-            <form action="/auth/signout" method="POST">
-              <button>Sign Out</button>
-            </form>
-          ) : (
-            <div className="flex gap-4">
-              <Link href="/login">Login</Link>
-              <Link href="/register">Register</Link>
-            </div>
-          )}
+          <div className="flex gap-4">
+            {user ? (
+              <div className="flex gap-4">
+                <p>Logged in as {user.user?.email}</p>
+                <form
+                  action={async () => {
+                    'use server';
+                    await supabase.auth.signOut();
+                    redirect('/login');
+                  }}
+                >
+                  <button>Logout</button>
+                </form>
+              </div>
+            ) : (
+              <>
+                <Link href="/login">Login</Link>
+                <Link href="/register">Register</Link>
+              </>
+            )}
+          </div>
         </header>
         <main
           id="skip"
           className="min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)]"
         >
           {children}
-          <Toaster />
         </main>
+        <Toaster />
       </body>
     </html>
   );
