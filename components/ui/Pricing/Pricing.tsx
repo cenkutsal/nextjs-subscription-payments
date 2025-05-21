@@ -2,7 +2,7 @@
 
 import Button from '@/components/ui/Button';
 import LogoCloud from '@/components/ui/LogoCloud';
-import type { Tables } from '@/types_db';
+import type { Tables, Json } from '@/types_db';
 import { getStripe } from '@/utils/stripe/client';
 import { checkoutWithStripe } from '@/utils/stripe/server';
 import { getErrorRedirect } from '@/utils/helpers';
@@ -14,12 +14,22 @@ import { useState } from 'react';
 type Subscription = Tables<'subscriptions'>;
 type Product = Tables<'products'>;
 type Price = Tables<'prices'>;
-interface ProductWithPrices extends Product {
-  prices: Price[];
+type BillingInterval = 'lifetime' | 'year' | 'month';
+
+interface ProductWithPrices {
+  id: string;
+  name: string | null;
+  description: string | null;
+  active: boolean | null;
+  image: string | null;
+  metadata: Json | null;
+  prices: Array<Price & { interval: BillingInterval | null }>;
 }
+
 interface PriceWithProduct extends Price {
   products: Product | null;
 }
+
 interface SubscriptionWithProduct extends Subscription {
   prices: PriceWithProduct | null;
 }
@@ -29,8 +39,6 @@ interface Props {
   products: ProductWithPrices[];
   subscription: SubscriptionWithProduct | null;
 }
-
-type BillingInterval = 'lifetime' | 'year' | 'month';
 
 export default function Pricing({ user, products, subscription }: Props) {
   const intervals = Array.from(
