@@ -1,6 +1,7 @@
 'use server';
 
 import { supabase } from '@/lib/supabase';
+import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
@@ -16,7 +17,17 @@ export type DepositFormData = z.infer<typeof depositSchema>;
 
 export async function createDeposit(formData: FormData) {
   try {
+    const supabaseClient = createClient();
+    const {
+      data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+      return { error: 'Please login first!' };
+    }
+
     const rawData = {
+      user_id: user.id,
       bankName: formData.get('bankName'),
       alias: formData.get('alias'),
       amount: Number(formData.get('amount')),
@@ -39,6 +50,7 @@ export async function createDeposit(formData: FormData) {
     dueDate.setDate(dueDate.getDate() + validated.termDays);
 
     const { error } = await supabase.from('deposits').insert({
+      user_id: user?.id,
       bank_name: validated.bankName,
       alias: validated.alias,
       amount: validated.amount,

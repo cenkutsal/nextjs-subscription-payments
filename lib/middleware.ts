@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
+import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 
 export async function middleware(req: NextRequest) {
   if (req.method === 'POST' && req.nextUrl.pathname.startsWith('/api')) {
@@ -17,5 +18,8 @@ export async function middleware(req: NextRequest) {
       return new NextResponse('Rate limit exceeded', { status: 429 });
     }
   }
-  return NextResponse.next();
+  const res = NextResponse.next();
+  const supabase = createMiddlewareClient({ req, res });
+  await supabase.auth.getSession();
+  return res;
 }
