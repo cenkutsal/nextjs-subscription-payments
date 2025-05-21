@@ -5,9 +5,8 @@ import { redirect } from 'next/navigation';
 export default async function Login() {
   const supabase = createClient();
   const { data: user } = await supabase.auth.getUser();
-  if (user) {
-    redirect('/');
-  }
+  if (user.user) redirect('/');
+
   return (
     <div className="max-w-md mx-auto mt-20">
       <AuthForm view="sign_in" />
