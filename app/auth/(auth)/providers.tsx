@@ -4,7 +4,9 @@ import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { useSearchParams } from 'next/navigation';
 
-export default function AuthForm({ view }: { view: 'sign_in' | 'sign_up' }) {
+type View = 'sign_in' | 'sign_up';
+
+export default function AuthForm({ view }: { view: View }) {
   const supabase = createClient();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || '/';
