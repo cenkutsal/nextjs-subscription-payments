@@ -1,11 +1,9 @@
 import AuthForm from '@/app/auth/(auth)/providers';
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
+import { redirectToHome } from '../actions/redirect';
 
 export default async function Register() {
-  const supabase = createClient();
-  const { data: user } = await supabase.auth.getUser();
-  if (user.user) redirect('/');
+  await redirectToHome();
+
   return (
     <div className="max-w-md mx-auto mt-20">
       <AuthForm view="sign_up" />
