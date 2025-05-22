@@ -11,6 +11,9 @@ export default async function Page() {
   }
   return (
     <div className="flex flex-col items-center justify-center h-screen">
+      <h1 className="text-2xl text-gray-200 font-bold mb-4 text-center">
+        Enter a new deposit
+      </h1>
       <DepositForm />
       <Link href="/deposits" className="text-blue-500 hover:text-blue-600 mt-4">
         View Deposits
