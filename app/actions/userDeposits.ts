@@ -17,7 +17,7 @@ export async function getUserDeposits(user: User) {
   `
     )
     .eq('user_id', user?.id)
-    .order('due_date', { ascending: true });
+    .order('id', { ascending: false });
 
   return deposits;
 }

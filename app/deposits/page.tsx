@@ -1,16 +1,27 @@
+import { redirect } from 'next/navigation';
 import DepositsTable from '@/components/DepositsTable';
 import Button from '@/components/ui/Button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { redirectToLogin } from '../actions/redirect';
 import { getUserDeposits } from '../actions/userDeposits';
+import { ensureAuth } from '../actions/auth';
 
 export default async function Deposits() {
-  const user = await redirectToLogin();
+  const user = await ensureAuth();
   const deposits = await getUserDeposits(user);
 
   if (!deposits) {
-    return <div>No deposits found</div>;
+    return (
+      <div className="container mx-auto px-4 py-10">
+        <h1 className="text-2xl text-gray-200 font-bold mb-4 text-center">
+          No deposits found
+        </h1>
+      </div>
+    );
+  }
+
+  if (!user) {
+    redirect('/login?message=You must be logged in to access this page');
   }
 
   return (

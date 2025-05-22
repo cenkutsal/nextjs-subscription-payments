@@ -15,7 +15,8 @@ const description = 'Track your deposits and get notified when they are due.';
 export const metadata: Metadata = {
   metadataBase: new URL(getURL()),
   title: title,
-  description: description
+  description: description,
+  themeColor: '#1a1b1e'
 };
 
 export default async function RootLayout({ children }: PropsWithChildren) {
@@ -25,16 +26,27 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   } = await supabase.auth.getUser();
 
   return (
-    <html lang="en">
-      <body className={`${inter.className} bg-black`}>
-        <Header user={user} userEmail={user?.email} />
-        <main
-          id="skip"
-          className="min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)]"
-        >
-          {children}
-        </main>
-        <Toaster />
+    <html lang="en" className="h-full">
+      <body
+        className={`${inter.className} min-h-full bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100 antialiased`}
+      >
+        <div className="flex min-h-screen flex-col">
+          <Header user={user} name={user?.user_metadata.full_name} />
+          <main id="skip" className="flex-1 w-full">
+            {children}
+          </main>
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              className: 'bg-gray-800 text-white',
+              style: {
+                background: '#1f2937',
+                color: '#fff',
+                border: '1px solid #374151'
+              }
+            }}
+          />
+        </div>
       </body>
     </html>
   );
