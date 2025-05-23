@@ -137,6 +137,31 @@ create table subscriptions (
 alter table subscriptions enable row level security;
 create policy "Can only view own subs data." on subscriptions for select using (auth.uid() = user_id);
 
+  -- Insert with idempotency check
+  INSERT INTO deposits(
+    bank_name,
+    alias,                -- Add this column
+    amount,
+    deposit_date,
+    term_days,
+    due_date,
+    idempotency_key
+  ) VALUES (
+    p_bank_name,
+    p_alias,              -- Insert alias
+    p_amount,
+    p_deposit_date,
+    p_term_days,
+    v_due_date,
+    p_idempotency_key
+  ) ON CONFLICT (idempotency_key) DO NOTHING;
+  
+  RETURN jsonb_build_object('success', true);
+EXCEPTION WHEN OTHERS THEN
+  RETURN jsonb_build_object('error', SQLERRM);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 /**
  * REALTIME SUBSCRIPTIONS
  * Only allow realtime listening on public tables.

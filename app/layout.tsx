@@ -15,8 +15,7 @@ const description = 'Track your deposits and get notified when they are due.';
 export const metadata: Metadata = {
   metadataBase: new URL(getURL()),
   title: title,
-  description: description,
-  themeColor: '#1a1b1e'
+  description: description
 };
 
 export default async function RootLayout({ children }: PropsWithChildren) {

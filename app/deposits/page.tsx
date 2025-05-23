@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation';
 import DepositsTable from '@/components/DepositsTable';
-import Button from '@/components/ui/Button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { getUserDeposits } from '../actions/userDeposits';
